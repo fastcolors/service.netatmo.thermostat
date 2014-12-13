@@ -7,6 +7,7 @@
 # PythonAPI Netatmo REST data access
 # coding=utf-8
 
+import xbmc
 import xbmcaddon
 import simplejson as json
 import time
@@ -28,8 +29,6 @@ if not _REFRESH:
 
 _REFRESH = float(_REFRESH)
 
-print _REFRESH
-
 #########################################################################
 
 # Common definitions
@@ -43,7 +42,7 @@ _GETTHERMO_REQ = _BASE_URL + "api/getthermstate"
 
 
 class ClientAuth:
-    "Request authentication and keep access token available through token method. Renew it automatically if necessary"
+    # "Request authentication and keep access token available through token method. Renew it automatically if necessary"
 
     def __init__(self, clientId=_CLIENT_ID,
                  clientSecret=_CLIENT_SECRET,
@@ -65,6 +64,8 @@ class ClientAuth:
         self.refreshToken = resp['refresh_token']
         self._scope = resp['scope']
         self.expiration = int(resp['expire_in'] + time.time())
+
+        xbmc.log(self._accessToken)
 
     @property
     def accessToken(self):
@@ -138,9 +139,13 @@ class DeviceList:
 
 def postRequest(url, params):
     params = urlencode(params)
-    # print params
+
     headers = {"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"}
     req = urllib2.Request(url=url, data=params, headers=headers)
+
+    xbmc.log(params)
+    xbmc.log(url)
+
     try:
         resp = urllib2.urlopen(req).read()
         return json.loads(resp)

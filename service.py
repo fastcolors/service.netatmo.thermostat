@@ -11,7 +11,7 @@ monitor = xbmc.Monitor()
 authorization = lnetatmo.ClientAuth()
 devList = lnetatmo.DeviceList(authorization)
 
-relaycommand = str(devList.thermrelaycmd)
+relaycommand = unicode(devList.thermrelaycmd)
 temp = str(devList.temperature)
 settemp = str(devList.setpoint_temp)
 setmode = str(devList.setpoint_mode)
@@ -27,7 +27,7 @@ while not monitor.waitForAbort(lnetatmo._REFRESH):
 
     devList = lnetatmo.DeviceList(authorization)
 
-    relaycommand = str(devList.thermrelaycmd)
+    relaycommand = unicode(devList.thermrelaycmd)
     temp = str(devList.temperature)
     settemp = str(devList.setpoint_temp)
     setmode = str(devList.setpoint_mode)
