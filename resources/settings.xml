@@ -7,6 +7,7 @@
     <setting id="password" type="text" option="hidden" label="30202" enable="!eq(-1,)" default="" />
     <setting type="sep" />
     <setting id="refresh" type="number" label="30203" default="60" />
+    <setting id="duration" type="number" label="minutes" default="3600" />
   </category>
 
 </settings>

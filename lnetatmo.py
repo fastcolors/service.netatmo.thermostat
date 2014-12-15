@@ -13,6 +13,7 @@ import simplejson as json
 import time
 from urllib import urlencode
 import urllib2
+from datetime import datetime,timedelta
 
 _ADDON_ = xbmcaddon.Addon()
 
@@ -39,6 +40,7 @@ _GETUSER_REQ = _BASE_URL + "api/getuser"
 _DEVICELIST_REQ = _BASE_URL + "api/devicelist"
 _GETMEASURE_REQ = _BASE_URL + "api/getmeasure"
 _GETTHERMO_REQ = _BASE_URL + "api/getthermstate"
+_SETTEHRMPOINT = _BASE_URL + "api/setthermpoint"
 
 
 class ClientAuth:
@@ -116,13 +118,22 @@ class DeviceList:
         self.default_device_id = list(self.devices.values())[0]['_id']
         self.default_module_id = list(self.modules.values())[0]['_id']
         self.thermrelaycmd = list(self.modules.values())[0]['therm_relay_cmd']
+        self.devicename = list(self.devices.values())[0]['station_name']
+        self.modulename = list(self.modules.values())[0]['module_name']
+        self.battery_vp = list(self.modules.values())[0]['battery_vp']
 
-        self.getthermoinfo(self.default_device_id,self.default_module_id)
+        if self.battery_vp > 4500:
+            self.battery = 100
+        else:
+            try:
+                self.battery_vp = self.battery_vp - 2500
+                self.battery = self.battery_vp / 20
+            except:
+                self.battery = 0
 
-    def modulesNamesList(self, station=None):
-        res = [m['module_name'] for m in self.modules.values()]
-        res.append(self.stationByName(station)['module_name'])
-        return res
+        self.respdev = resp
+
+        self.getthermoinfo(self.default_device_id, self.default_module_id)
 
     def getthermoinfo(self, device_id, module_id):
         postParams = {"access_token": self.getAuthToken}
@@ -130,9 +141,41 @@ class DeviceList:
         postParams['module_id'] = module_id
         resp = postRequest(_GETTHERMO_REQ, postParams)
 
+        self.respthermo = resp
+
         self.temperature = resp['body']['measured']['temperature']
         self.setpoint_temp = resp['body']['measured']['setpoint_temp']
         self.setpoint_mode = resp['body']['setpoint']['setpoint_mode']
+        if self.setpoint_mode == 'manual':
+            self.manual_endpoint = resp['body']['setpoint']['setpoint_endtime']
+
+    def setthermpoint(self, setpoint_mode, setpoint_temp, setpoint_duration):
+        postParams = {"access_token": self.getAuthToken}
+        postParams['device_id'] = self.default_device_id
+        postParams['module_id'] = self.default_module_id
+        postParams['setpoint_mode'] = setpoint_mode
+        postParams['setpoint_temp'] = setpoint_temp
+        self.endtime = time.time() + float(setpoint_duration)
+
+        print '--------------------------'
+        print self.endtime
+        print time.time()
+        print '---------------MM-----------'
+
+        postParams['setpoint_endtime'] = self.endtime
+
+        resp = postRequest(_SETTEHRMPOINT, postParams)
+        self.getthermoinfo(self.default_device_id, self.default_module_id)
+
+    def setstatus(self, setpoint_mode):
+        postParams = {"access_token": self.getAuthToken}
+        postParams['device_id'] = self.default_device_id
+        postParams['module_id'] = self.default_module_id
+        postParams['setpoint_mode'] = setpoint_mode
+
+        resp = postRequest(_SETTEHRMPOINT, postParams)
+        self.getthermoinfo(self.default_device_id, self.default_module_id)
+
 
 
 # Utilities routines
@@ -143,19 +186,19 @@ def postRequest(url, params):
     headers = {"Content-Type": "application/x-www-form-urlencoded;charset=utf-8"}
     req = urllib2.Request(url=url, data=params, headers=headers)
 
-    xbmc.log(params)
-    xbmc.log(url)
+    # xbmc.log(params)
+    # xbmc.log(url)
 
     try:
         resp = urllib2.urlopen(req).read()
         return json.loads(resp)
     except:
-        return "oh darn!"
-    return json.loads(resp)
+        return {}
+    # return json.loads(resp)
 
 
 def toTimeString(value):
-    return time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime(int(value)))
+    return time.strftime("%H:%M:%S", time.localtime(int(value)))
 
 
 def toEpoch(value):

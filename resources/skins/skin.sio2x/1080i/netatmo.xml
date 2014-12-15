@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window id="1919">
+    <defaultcontrol always="true">2</defaultcontrol>
+    <allowoverlay>no</allowoverlay>
+    <backgroundcolor>background</backgroundcolor>
+    <include>OpenClose</include>
+    <controls>
+        <control type="image">
+            <width>1920</width>
+            <height>1080</height>
+            <texture background="true">$VAR[bgimg]</texture>
+            <aspectratio align="left">scale</aspectratio>
+        </control>
+        <control type="image">
+            <centerleft>340</centerleft>
+            <top>45</top>
+            <width>550</width>
+            <height>990</height>
+            <texture border="20">images/diffuserounded.png</texture>
+            <colordiffuse>gainsboro</colordiffuse>
+        </control>
+        <control type="image">
+            <centerleft>340</centerleft>
+            <top>80</top>
+            <width>500</width>
+            <height>500</height>
+            <texture>case.png</texture>
+        </control>
+        <control type="grouplist">
+            <centerleft>340</centerleft>
+            <top>600</top>
+            <width>500</width>
+            <align>left</align>
+            <onup>noop</onup>
+            <control type="button" id="2">
+                <label>Set Temperature</label>
+                <width>500</width>
+                <align>left</align>
+                <textcolor>black</textcolor>
+                <focusedcolor>black</focusedcolor>
+                <onclick>RunScript(service.netatmo.thermostat,settemp=True)</onclick>
+            </control>
+            <control type="button" id="4">
+                <align>left</align>
+                <width>500</width>
+                <label>Max</label>
+                <textcolor>black</textcolor>
+                <focusedcolor>black</focusedcolor>
+                <onclick>RunScript(service.netatmo.thermostat,max=True)</onclick>
+            </control>
+            <control type="button" id="5">
+                <align>left</align>
+                <width>500</width>
+                <label>Turn Off</label>
+                <textcolor>black</textcolor>
+                <focusedcolor>black</focusedcolor>
+                <onclick>RunScript(service.netatmo.thermostat,off=True)</onclick>
+            </control>
+            <control type="radiobutton" id="6">
+                <selected>StringCompare(Window(home).Property(netatmo_HomeSetMode),away)</selected>
+                <label>Away</label>
+                <width>500</width>
+                <textcolor>black</textcolor>
+                <focusedcolor>black</focusedcolor>
+                <radiowidth>116</radiowidth>
+                <radioheight>58</radioheight>
+                <texturefocus colordiffuse="$VAR[diffuseselect]">images/buttonselect2.png</texturefocus>
+                <textureradiofocus aspectratio="keep">awaybutton_FO.png</textureradiofocus>
+                <textureradionofocus aspectratio="keep">awaybutton.png</textureradionofocus>
+                <radioposx>10</radioposx>
+                <textoffsetx>130</textoffsetx>
+                <onclick condition="!StringCompare(Window(home).Property(HomeSetMode),away)">RunScript(service.netatmo.thermostat,away=True)</onclick>
+                <onclick condition="StringCompare(Window(home).Property(HomeSetMode),away)">RunScript(service.netatmo.thermostat,program=True)</onclick>
+            </control>
+            <control type="radiobutton" id="7">
+                <selected>StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)</selected>
+                <label>AntiFreeze</label>
+                <width>500</width>
+                <textcolor>black</textcolor>
+                <focusedcolor>black</focusedcolor>
+                <radiowidth>116</radiowidth>
+                <radioheight>58</radioheight>
+                <texturefocus colordiffuse="$VAR[diffuseselect]">images/buttonselect2.png</texturefocus>
+                <textureradiofocus aspectratio="keep">hgbutton_FO.png</textureradiofocus>
+                <textureradionofocus aspectratio="keep">hgbutton.png</textureradionofocus>
+                <radioposx>10</radioposx>
+                <textoffsetx>130</textoffsetx>
+                <onclick condition="!StringCompare(Window(home).Property(HomeSetMode),hg)">RunScript(service.netatmo.thermostat,hg=True)</onclick>
+                <onclick condition="StringCompare(Window(home).Property(HomeSetMode),hg)">RunScript(service.netatmo.thermostat,program=True)</onclick>
+            </control>
+        </control>
+        <control type="grouplist">
+            <centerleft>340</centerleft>
+            <top>130</top>
+            <width>200</width>
+            <height>400</height>
+            <align>center</align>
+            <itemgap>20</itemgap>
+            <control type="label">
+                <font>thermo</font>
+                <textcolor>black</textcolor>
+                <shadowcolor>-</shadowcolor>
+                <label>$INFO[Window(home).Property(netatmo_HomeSetTemperature)]</label>
+                <align>center</align>
+            </control>
+            <control type="label">
+                <font>thermo2</font>
+                <textcolor>black</textcolor>
+                <shadowcolor>-</shadowcolor>
+                <label>$INFO[Window(home).Property(netatmo_HomeTemperature)]</label>
+                <align>center</align>
+            </control>
+        </control>
+        <!--<control type="label">-->
+        <!--<font>thermo</font>-->
+        <!--<top>80</top>-->
+        <!--<centerleft>1310</centerleft>-->
+        <!--<label>$INFO[Window(home).Property(netatmo_LocationName)]</label>-->
+        <!--<align>center</align>-->
+        <!--</control>-->
+        <!--<control type="label">-->
+        <!--<font>thermo</font>-->
+        <!--<label>Module: $INFO[Window(home).Property(netatmo_ModuleName)]</label>-->
+        <!--<align>center</align>-->
+        <!--</control>-->
+        <control type="textbox">
+            <top>0</top>
+            <left>700</left>
+            <width>1100</width>
+            <font>size13</font>
+            <height>1080</height>
+            <label>$INFO[Window(home).Property(netatmo_Battery)][CR]$INFO[Window(home).Property(dev)][CR]----[CR]$INFO[Window(home).Property(ter)]</label>
+            <!--<label>until $INFO[Window(home).Property(ManualEnd)][CR]$INFO[Window(home).Property(HomeSetMode)]</label>-->
+        </control>
+        <control type="image" description="BoilerOn">
+            <visible>!IsEmpty(Window(Home).Property(netatmo_RelayCommand))</visible>
+            <visible>!StringCompare(Window(Home).Property(netatmo_RelayCommand),0)</visible>
+            <left>480</left>
+            <top>470</top>
+            <width>42</width>
+            <height>42</height>
+            <texture colordiffuse="red">boiler.png</texture>
+            <aspectratio>keep</aspectratio>
+        </control>
+        <control type="progress" id="200">
+            <left>141</left>
+            <top>473</top>
+            <width>40</width>
+            <height>19</height>
+            <visible>true</visible>
+            <reveal>false</reveal>
+            <texturebg>images/transparent.png</texturebg>
+            <midtexture border="1" colordiffuse="green">images/white.png</midtexture>
+            <!--<info>System.BatteryLevel</info>-->
+            <info>Window(Home).Property(netatmo_Battery)</info>
+        </control>
+        <control type="image" description="Battery">
+            <left>140</left>
+            <top>470</top>
+            <width>50</width>
+            <height>24</height>
+            <texture colordiffuse="red">battery.png</texture>
+            <aspectratio>keep</aspectratio>
+        </control>
+    </controls>
+</window>

@@ -18,3 +18,5 @@
 *.pyo
 
 lnetatmo.pyo
+
+.idea/dictionaries/macbook.xml
