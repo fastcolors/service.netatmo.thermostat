@@ -144,8 +144,11 @@ class DeviceList:
         self.respthermo = resp
 
         self.temperature = resp['body']['measured']['temperature']
-        self.setpoint_temp = resp['body']['measured']['setpoint_temp']
         self.setpoint_mode = resp['body']['setpoint']['setpoint_mode']
+        if self.setpoint_mode == 'max':
+            self.setpoint_temp = 'MAX'
+        else:
+            self.setpoint_temp = float(resp['body']['measured']['setpoint_temp'])
         if self.setpoint_mode == 'manual':
             self.manual_endpoint = resp['body']['setpoint']['setpoint_endtime']
 
@@ -154,7 +157,8 @@ class DeviceList:
         postParams['device_id'] = self.default_device_id
         postParams['module_id'] = self.default_module_id
         postParams['setpoint_mode'] = setpoint_mode
-        postParams['setpoint_temp'] = setpoint_temp
+        if setpoint_temp:
+            postParams['setpoint_temp'] = setpoint_temp
         self.endtime = time.time() + float(setpoint_duration)
 
         print '--------------------------'

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window id="1919">
-    <defaultcontrol always="true">2</defaultcontrol>
+    <defaultcontrol always="true">201</defaultcontrol>
     <allowoverlay>no</allowoverlay>
     <backgroundcolor>background</backgroundcolor>
     <include>OpenClose</include>
@@ -20,6 +20,14 @@
             <colordiffuse>gainsboro</colordiffuse>
         </control>
         <control type="image">
+            <centerleft>1270</centerleft>
+            <top>45</top>
+            <width>1150</width>
+            <height>990</height>
+            <texture border="20">images/diffuserounded.png</texture>
+            <colordiffuse>gainsboro</colordiffuse>
+        </control>
+        <control type="image">
             <centerleft>340</centerleft>
             <top>80</top>
             <width>500</width>
@@ -32,15 +40,14 @@
             <width>500</width>
             <align>left</align>
             <onup>noop</onup>
-            <control type="button" id="2">
+            <control type="button" id="201">
                 <label>Set Temperature</label>
                 <width>500</width>
                 <align>center</align>
                 <textcolor>black</textcolor>
                 <focusedcolor>black</focusedcolor>
-                <onclick>RunScript(service.netatmo.thermostat,settemp=True)</onclick>
             </control>
-            <control type="radiobutton" id="4">
+            <control type="radiobutton" id="202">
                 <selected>SubString(Window(home).Property(netatmo_HomeSetMode),max)</selected>
                 <label>Max</label>
                 <width>500</width>
@@ -53,10 +60,8 @@
                 <textureradionofocus aspectratio="keep">maxbutton.png</textureradionofocus>
                 <radioposx>10</radioposx>
                 <textoffsetx>130</textoffsetx>
-                <onclick condition="!SubString(Window(home).Property(netatmo_HomeSetMode),max)">RunScript(service.netatmo.thermostat,max=True)</onclick>
-                <onclick condition="SubString(Window(home).Property(netatmo_HomeSetMode),max)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
-            <control type="radiobutton" id="5">
+            <control type="radiobutton" id="203">
                 <selected>SubString(Window(home).Property(netatmo_HomeSetMode),off)</selected>
                 <label>Off</label>
                 <width>500</width>
@@ -69,10 +74,8 @@
                 <textureradionofocus aspectratio="keep">offbutton.png</textureradionofocus>
                 <radioposx>10</radioposx>
                 <textoffsetx>130</textoffsetx>
-                <onclick condition="!SubString(Window(home).Property(netatmo_HomeSetMode),off)">RunScript(service.netatmo.thermostat,off=True)</onclick>
-                <onclick condition="SubString(Window(home).Property(netatmo_HomeSetMode),off)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
-            <control type="radiobutton" id="6">
+            <control type="radiobutton" id="204">
                 <selected>StringCompare(Window(home).Property(netatmo_HomeSetMode),away)</selected>
                 <label>Away</label>
                 <width>500</width>
@@ -85,10 +88,8 @@
                 <textureradionofocus aspectratio="keep">awaybutton.png</textureradionofocus>
                 <radioposx>10</radioposx>
                 <textoffsetx>130</textoffsetx>
-                <onclick condition="!StringCompare(Window(home).Property(netatmo_HomeSetMode),away)">RunScript(service.netatmo.thermostat,away=True)</onclick>
-                <onclick condition="StringCompare(Window(home).Property(netatmo_HomeSetMode),away)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
-            <control type="radiobutton" id="7">
+            <control type="radiobutton" id="205">
                 <selected>StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)</selected>
                 <label>AntiFreeze</label>
                 <width>500</width>
@@ -101,8 +102,6 @@
                 <textureradionofocus aspectratio="keep">hgbutton.png</textureradionofocus>
                 <radioposx>10</radioposx>
                 <textoffsetx>130</textoffsetx>
-                <onclick condition="!StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)">RunScript(service.netatmo.thermostat,hg=True)</onclick>
-                <onclick condition="StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
         </control>
         <control type="grouplist">
@@ -112,45 +111,48 @@
             <height>400</height>
             <align>center</align>
             <itemgap>20</itemgap>
-            <control type="label">
+            <control type="label" id="302">
                 <font>thermo</font>
                 <textcolor>black</textcolor>
                 <shadowcolor>-</shadowcolor>
-                <label>$INFO[Window(home).Property(netatmo_HomeSetTemperature)]</label>
+                <label>-</label>
                 <align>center</align>
             </control>
-            <control type="label">
+            <control type="label" id="303">
                 <font>thermo2</font>
                 <textcolor>black</textcolor>
                 <shadowcolor>-</shadowcolor>
-                <label>$INFO[Window(home).Property(netatmo_HomeTemperature)]</label>
+                <label>-</label>
                 <align>center</align>
             </control>
         </control>
-        <!--<control type="label">-->
-        <!--<font>thermo</font>-->
-        <!--<top>80</top>-->
-        <!--<centerleft>1310</centerleft>-->
-        <!--<label>$INFO[Window(home).Property(netatmo_LocationName)]</label>-->
-        <!--<align>center</align>-->
-        <!--</control>-->
-        <!--<control type="label">-->
-        <!--<font>thermo</font>-->
-        <!--<label>Module: $INFO[Window(home).Property(netatmo_ModuleName)]</label>-->
-        <!--<align>center</align>-->
-        <!--</control>-->
-        <control type="textbox">
-            <top>0</top>
-            <left>700</left>
-            <width>1100</width>
-            <font>size13</font>
-            <height>1080</height>
-            <label>$INFO[Window(home).Property(netatmo_Battery)][CR]$INFO[Window(home).Property(dev)][CR]----[CR]$INFO[Window(home).Property(ter)]</label>
-            <!--<label>until $INFO[Window(home).Property(ManualEnd)][CR]$INFO[Window(home).Property(HomeSetMode)]</label>-->
+        <control type="label" id ='300'>
+            <font>thermo</font>
+            <top>70</top>
+            <centerleft>1270</centerleft>
+            <label></label>
+            <textcolor>black</textcolor>
+            <shadowcolor>-</shadowcolor>
+            <align>center</align>
         </control>
-        <control type="image" description="BoilerOn">
-            <visible>!IsEmpty(Window(Home).Property(netatmo_RelayCommand))</visible>
-            <visible>!StringCompare(Window(Home).Property(netatmo_RelayCommand),0)</visible>
+        <control type="label" id = '301'>
+            <top>120</top>
+            <centerleft>1270</centerleft>
+            <label>$INFO[Window(home).Property(netatmo_ModuleName)]</label>
+            <textcolor>black</textcolor>
+            <shadowcolor>-</shadowcolor>
+            <align>center</align>
+        </control>
+        <!--<control type="textbox">-->
+        <!--<top>0</top>-->
+        <!--<left>700</left>-->
+        <!--<width>1100</width>-->
+        <!--<font>size13</font>-->
+        <!--<height>1080</height>-->
+        <!--<label>[CR]$INFO[Window(home).Property(dev)][CR]----[CR]$INFO[Window(home).Property(ter)]</label>-->
+        <!--&lt;!&ndash;<label>until $INFO[Window(home).Property(ManualEnd)][CR]$INFO[Window(home).Property(HomeSetMode)]</label>&ndash;&gt;-->
+        <!--</control>-->
+        <control type="image" description="BoilerOn" id="304">
             <left>480</left>
             <top>470</top>
             <width>42</width>

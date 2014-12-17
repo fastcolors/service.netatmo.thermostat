@@ -4,18 +4,14 @@
 import xbmcaddon
 import xbmcgui
 import lnetatmo
-import sys
 
 authorization = lnetatmo.ClientAuth()
-devList = lnetatmo.DeviceList(authorization)
 
 __addon__ = xbmcaddon.Addon()
 defaulttime = __addon__.getSetting("duration")
-__CWD = __addon__.getAddonInfo('path').decode('utf-8')
 
 class ThermoWindow(xbmcgui.WindowXML):
-
-    def __init__(self,strXMLname, strFallbackPath):
+    def __init__(self, strXMLname, strFallbackPath):
         # Changing the three varibles passed won't change, anything
         # Doing strXMLname = "bah.xml" will not change anything.
         # don't put GUI sensitive stuff here (as the xml hasn't been read yet
@@ -23,79 +19,47 @@ class ThermoWindow(xbmcgui.WindowXML):
         pass
 
     def onInit(self):
-        battery = devList.battery
-        self.getControl(200).setPercent(battery)
+        self.getControl(304).setVisible(False)
+        self.updatevalues()
         pass
 
     # def onAction(self, action):
-    #     # Same as normal python Windows.
+    # # Same as normal python Windows.
     #     pass
     #
-    # def onClick(self, controlID):
-    #     """
-    #         Notice: onClick not onControl
-    #         Notice: it gives the ID of the control not the control object
-    #     """
-    #     pass
+    def onClick(self, controlID):
+
+        if controlID == 201:
+            self.askfortemperature()
+            self.updatevalues()
+
+        elif controlID == 202:
+            self.setmax()
+            self.updatevalues()
+
+        elif controlID == 203:
+            self.setoff()
+            self.updatevalues()
+
+        elif controlID == 204:
+            self.setaway()
+            self.updatevalues()
+
+        elif controlID == 205:
+            self.sethg()
+            self.updatevalues()
+        pass
+
     #
     # def onFocus(self, controlID):
     #     pass
-
-class thermopage:
-    def __init__(self):
-        self.parseargv()
-        if self.SETTEMP:
-            self.askfortemperature()
-        elif self.AWAY:
-            self.setaway()
-        elif self.NOFREEZE:
-            self.setnofreeze()
-        elif self.TURNON:
-            self.setmax()
-        elif self.TURNOFF:
-            self.setoff()
-        elif self.PROGRAM:
-            self.setprogram()
-        else:
-            ui = ThermoWindow('netatmo.xml', __addon__.getAddonInfo('path').decode('utf-8'))
-            ui.doModal()
-
-
-        # UPDATE VALUES
-
-        temp = str(devList.temperature)
-        xbmcgui.Window(10000).setProperty('netatmo_HomeTemperature', temp)
-        settemp = str(float(devList.setpoint_temp))
-        xbmcgui.Window(10000).setProperty('netatmo_HomeSetTemperature', settemp)
-        setmode = str(devList.setpoint_mode)
-        xbmcgui.Window(10000).setProperty('netatmo_HomeSetMode', setmode)
-        relaycommand = unicode(devList.thermrelaycmd)
-        xbmcgui.Window(10000).setProperty('netatmo_RelayCommand', relaycommand)
-        module_name = str(devList.modulename)
-        xbmcgui.Window(10000).setProperty('netatmo_ModuleName', module_name)
-        device_name = str(devList.devicename)
-        xbmcgui.Window(10000).setProperty('netatmo_LocationName', device_name)
-
-        respdev = str(devList.respdev)
-        xbmcgui.Window(10000).setProperty('dev', respdev)
-        respter = str(devList.respthermo)
-        xbmcgui.Window(10000).setProperty('ter', respter)
-
-        if setmode == 'manual':
-            manual_end = str(devList.manual_endpoint)
-            manual_end = lnetatmo.toTimeString(manual_end)
-
-            xbmcgui.Window(10000).setProperty('ManualEnd', manual_end)
-
-
-
 
     def askfortemperature(self):
         dialog = xbmcgui.Dialog()
         try:
             d = dialog.numeric(0, 'Enter Desired Temperature')
         except:
-            d = devList.Temperature
+            d = self.devList.Temperature
         try:
             t = dialog.numeric(0, 'Enter Desired Duration in minutes')
             t = int(t) * 60
@@ -103,46 +67,57 @@ class thermopage:
         except:
             t = defaulttime
 
-        devList.setthermpoint('manual', d, t)
+        self.devList.setthermpoint('manual', d, t)
 
 
     def setaway(self):
-        devList.setstatus('away')
+        self.devList.setstatus('away')
 
     def setprogram(self):
-        devList.setstatus('program')
+        self.devList.setstatus('program')
 
-    def setnofreeze(self):
-        devList.setstatus('hg')
+    def sethg(self):
+        self.devList.setstatus('hg')
 
     def setmax(self):
-        try:
-            t = dialog.numeric(0, 'Enter Desired Duration in minutes')
-            t = int(t) * 60
-            t = str(t)
-        except:
-            t = defaulttime
-
-        d = 45
-        devList.setthermpoint('manual', d, t)
+        self.devList.setthermpoint('max', None, '3600')
 
     def setoff(self):
-        devList.setstatus('off')
+        self.devList.setstatus('off')
 
-    def parseargv(self):
-        try:
-            self.params = dict(arg.split("=") for arg in sys.argv[1].split("&"))
-        except:
-            self.params = {}
+    def updatevalues(self):
+        self.devList = lnetatmo.DeviceList(authorization)
 
-        xbmc.log("### params: %s" % self.params)
+        battery = self.devList.battery
+        self.getControl(200).setPercent(battery)
+        self.getControl(300).setLabel(str(self.devList.devicename))
+        self.getControl(301).setLabel(str(self.devList.modulename))
+        self.getControl(302).setLabel(str(self.devList.setpoint_temp))
+        self.getControl(303).setLabel(str(self.devList.temperature))
+        relaycommand = self.devList.thermrelaycmd
+        if relaycommand == 0:
+            self.getControl(304).setVisible(False)
+        else:
+            self.getControl(304).setVisible(True)
 
-        self.SETTEMP = self.params.get("settemp", False)
-        self.AWAY = self.params.get("away", False)
-        self.NOFREEZE = self.params.get("hg", False)
-        self.TURNON = self.params.get("max", False)
-        self.TURNOFF = self.params.get("off", False)
-        self.PROGRAM = self.params.get("program", False)
 
+        setmode = str(self.devList.setpoint_mode)
+        xbmcgui.Window(10000).setProperty('netatmo_HomeSetMode', setmode)
+        if setmode == 'manual':
+            manual_end = str(self.devList.manual_endpoint)
+            manual_end = lnetatmo.toTimeString(manual_end)
+            xbmcgui.Window(10000).setProperty('ManualEnd', manual_end)
+
+        respdev = str(self.devList.respdev)
+        xbmcgui.Window(10000).setProperty('dev', respdev)
+        respter = str(self.devList.respthermo)
+        xbmcgui.Window(10000).setProperty('ter', respter)
+
+
+class thermopage:
+    def __init__(self):
+        ui = ThermoWindow('netatmo.xml', __addon__.getAddonInfo('path').decode('utf-8'))
+        ui.doModal()
+        del ui
 
 thermopage()
