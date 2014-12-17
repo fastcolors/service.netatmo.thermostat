@@ -12,8 +12,34 @@ devList = lnetatmo.DeviceList(authorization)
 __addon__ = xbmcaddon.Addon()
 defaulttime = __addon__.getSetting("duration")
 __CWD = __addon__.getAddonInfo('path').decode('utf-8')
-_WINDOW = xbmcgui.WindowXML('netatmo.xml', __CWD)
 
+class ThermoWindow(xbmcgui.WindowXML):
+
+    def __init__(self,strXMLname, strFallbackPath):
+        # Changing the three varibles passed won't change, anything
+        # Doing strXMLname = "bah.xml" will not change anything.
+        # don't put GUI sensitive stuff here (as the xml hasn't been read yet
+        # Idea to initialize your variables here
+        pass
+
+    def onInit(self):
+        battery = devList.battery
+        self.getControl(200).setPercent(battery)
+        pass
+
+    # def onAction(self, action):
+    #     # Same as normal python Windows.
+    #     pass
+    #
+    # def onClick(self, controlID):
+    #     """
+    #         Notice: onClick not onControl
+    #         Notice: it gives the ID of the control not the control object
+    #     """
+    #     pass
+    #
+    # def onFocus(self, controlID):
+    #     pass
 
 class thermopage:
     def __init__(self):
@@ -31,7 +57,9 @@ class thermopage:
         elif self.PROGRAM:
             self.setprogram()
         else:
-            _WINDOW.doModal()
+            ui = ThermoWindow('netatmo.xml', __addon__.getAddonInfo('path').decode('utf-8'))
+            ui.doModal()
+
 
         # UPDATE VALUES
 
@@ -47,8 +75,6 @@ class thermopage:
         xbmcgui.Window(10000).setProperty('netatmo_ModuleName', module_name)
         device_name = str(devList.devicename)
         xbmcgui.Window(10000).setProperty('netatmo_LocationName', device_name)
-        battery = devList.battery
-        _WINDOW.ControlProgress(200).setPercent(battery)
 
         respdev = str(devList.respdev)
         xbmcgui.Window(10000).setProperty('dev', respdev)
@@ -60,6 +86,7 @@ class thermopage:
             manual_end = lnetatmo.toTimeString(manual_end)
 
             xbmcgui.Window(10000).setProperty('ManualEnd', manual_end)
+
 
 
 
@@ -96,7 +123,7 @@ class thermopage:
         except:
             t = defaulttime
 
-        d = 40
+        d = 45
         devList.setthermpoint('manual', d, t)
 
     def setoff(self):
