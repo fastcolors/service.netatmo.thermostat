@@ -126,7 +126,7 @@ class DeviceList:
             self.battery = 100
         else:
             try:
-                self.battery_vp = self.battery_vp - 2500
+                self.battery_vp -= 2500
                 self.battery = self.battery_vp / 20
             except:
                 self.battery = 0

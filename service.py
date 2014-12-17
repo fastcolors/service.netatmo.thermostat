@@ -28,8 +28,7 @@ def retrieve():
     xbmcgui.Window(10000).setProperty('netatmo_ModuleName', module_name)
     device_name = str(devList.devicename)
     xbmcgui.Window(10000).setProperty('netatmo_LocationName', device_name)
-    battery = devList.battery
-    xbmcgui.ControlProgress(200).setPercent(battery)
+
 
     respdev = str(devList.respdev)
     xbmcgui.Window(10000).setProperty('dev', respdev)

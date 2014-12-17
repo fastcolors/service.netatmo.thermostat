@@ -35,26 +35,42 @@
             <control type="button" id="2">
                 <label>Set Temperature</label>
                 <width>500</width>
-                <align>left</align>
+                <align>center</align>
                 <textcolor>black</textcolor>
                 <focusedcolor>black</focusedcolor>
                 <onclick>RunScript(service.netatmo.thermostat,settemp=True)</onclick>
             </control>
-            <control type="button" id="4">
-                <align>left</align>
-                <width>500</width>
+            <control type="radiobutton" id="4">
+                <selected>SubString(Window(home).Property(netatmo_HomeSetMode),max)</selected>
                 <label>Max</label>
-                <textcolor>black</textcolor>
-                <focusedcolor>black</focusedcolor>
-                <onclick>RunScript(service.netatmo.thermostat,max=True)</onclick>
-            </control>
-            <control type="button" id="5">
-                <align>left</align>
                 <width>500</width>
-                <label>Turn Off</label>
                 <textcolor>black</textcolor>
                 <focusedcolor>black</focusedcolor>
-                <onclick>RunScript(service.netatmo.thermostat,off=True)</onclick>
+                <radiowidth>116</radiowidth>
+                <radioheight>58</radioheight>
+                <texturefocus colordiffuse="$VAR[diffuseselect]">images/buttonselect2.png</texturefocus>
+                <textureradiofocus aspectratio="keep">maxbutton_FO.png</textureradiofocus>
+                <textureradionofocus aspectratio="keep">maxbutton.png</textureradionofocus>
+                <radioposx>10</radioposx>
+                <textoffsetx>130</textoffsetx>
+                <onclick condition="!SubString(Window(home).Property(netatmo_HomeSetMode),max)">RunScript(service.netatmo.thermostat,max=True)</onclick>
+                <onclick condition="SubString(Window(home).Property(netatmo_HomeSetMode),max)">RunScript(service.netatmo.thermostat,program=True)</onclick>
+            </control>
+            <control type="radiobutton" id="5">
+                <selected>SubString(Window(home).Property(netatmo_HomeSetMode),off)</selected>
+                <label>Off</label>
+                <width>500</width>
+                <textcolor>black</textcolor>
+                <focusedcolor>black</focusedcolor>
+                <radiowidth>116</radiowidth>
+                <radioheight>58</radioheight>
+                <texturefocus colordiffuse="$VAR[diffuseselect]">images/buttonselect2.png</texturefocus>
+                <textureradiofocus aspectratio="keep">offbutton_FO.png</textureradiofocus>
+                <textureradionofocus aspectratio="keep">offbutton.png</textureradionofocus>
+                <radioposx>10</radioposx>
+                <textoffsetx>130</textoffsetx>
+                <onclick condition="!SubString(Window(home).Property(netatmo_HomeSetMode),off)">RunScript(service.netatmo.thermostat,off=True)</onclick>
+                <onclick condition="SubString(Window(home).Property(netatmo_HomeSetMode),off)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
             <control type="radiobutton" id="6">
                 <selected>StringCompare(Window(home).Property(netatmo_HomeSetMode),away)</selected>
@@ -69,8 +85,8 @@
                 <textureradionofocus aspectratio="keep">awaybutton.png</textureradionofocus>
                 <radioposx>10</radioposx>
                 <textoffsetx>130</textoffsetx>
-                <onclick condition="!StringCompare(Window(home).Property(HomeSetMode),away)">RunScript(service.netatmo.thermostat,away=True)</onclick>
-                <onclick condition="StringCompare(Window(home).Property(HomeSetMode),away)">RunScript(service.netatmo.thermostat,program=True)</onclick>
+                <onclick condition="!StringCompare(Window(home).Property(netatmo_HomeSetMode),away)">RunScript(service.netatmo.thermostat,away=True)</onclick>
+                <onclick condition="StringCompare(Window(home).Property(netatmo_HomeSetMode),away)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
             <control type="radiobutton" id="7">
                 <selected>StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)</selected>
@@ -85,8 +101,8 @@
                 <textureradionofocus aspectratio="keep">hgbutton.png</textureradionofocus>
                 <radioposx>10</radioposx>
                 <textoffsetx>130</textoffsetx>
-                <onclick condition="!StringCompare(Window(home).Property(HomeSetMode),hg)">RunScript(service.netatmo.thermostat,hg=True)</onclick>
-                <onclick condition="StringCompare(Window(home).Property(HomeSetMode),hg)">RunScript(service.netatmo.thermostat,program=True)</onclick>
+                <onclick condition="!StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)">RunScript(service.netatmo.thermostat,hg=True)</onclick>
+                <onclick condition="StringCompare(Window(home).Property(netatmo_HomeSetMode),hg)">RunScript(service.netatmo.thermostat,program=True)</onclick>
             </control>
         </control>
         <control type="grouplist">
@@ -144,23 +160,22 @@
         </control>
         <control type="progress" id="200">
             <left>141</left>
-            <top>473</top>
-            <width>40</width>
-            <height>19</height>
+            <top>471</top>
+            <width>41</width>
+            <height>21</height>
             <visible>true</visible>
             <reveal>false</reveal>
             <texturebg>images/transparent.png</texturebg>
-            <midtexture border="1" colordiffuse="green">images/white.png</midtexture>
-            <!--<info>System.BatteryLevel</info>-->
-            <info>Window(Home).Property(netatmo_Battery)</info>
+            <midtexture border="1" colordiffuse="lime">images/white.png</midtexture>
+            <info>-</info>
+            <!--<info>Window(Home).Property(netatmo_Battery)</info>-->
         </control>
         <control type="image" description="Battery">
             <left>140</left>
             <top>470</top>
             <width>50</width>
             <height>24</height>
-            <texture colordiffuse="red">battery.png</texture>
-            <aspectratio>keep</aspectratio>
+            <texture>battery.png</texture>
         </control>
     </controls>
 </window>
