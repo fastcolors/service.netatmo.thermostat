@@ -150,7 +150,7 @@ class DeviceList:
         else:
             self.setpoint_temp = float(resp['body']['measured']['setpoint_temp'])
         if self.setpoint_mode == 'manual':
-            self.manual_endpoint = resp['body']['setpoint']['setpoint_endtime']
+            self.setpoint_endpoint = resp['body']['setpoint']['setpoint_endtime']
 
     def setthermpoint(self, setpoint_mode, setpoint_temp, setpoint_duration):
         postParams = {"access_token": self.getAuthToken}

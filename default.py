@@ -102,11 +102,10 @@ class ThermoWindow(xbmcgui.WindowXML):
 
 
         setmode = str(self.devList.setpoint_mode)
-        xbmcgui.Window(10000).setProperty('netatmo_HomeSetMode', setmode)
         if setmode == 'manual':
-            manual_end = str(self.devList.manual_endpoint)
-            manual_end = lnetatmo.toTimeString(manual_end)
-            xbmcgui.Window(10000).setProperty('ManualEnd', manual_end)
+            setpoint_end = str(self.devList.setpoint_endpoint)
+            setpoint_end = lnetatmo.toTimeString(setpoint_end)
+            self.getControl(305).setLabel(setpoint_end)
 
         respdev = str(self.devList.respdev)
         xbmcgui.Window(10000).setProperty('dev', respdev)
