@@ -5,7 +5,7 @@ import xbmcaddon
 import xbmcgui
 import lnetatmo
 
-authorization = lnetatmo.ClientAuth()
+status = xbmc.getInfoLabel('system.internetstate')
 
 __addon__ = xbmcaddon.Addon()
 defaulttime = __addon__.getSetting("duration")
@@ -34,19 +34,31 @@ class ThermoWindow(xbmcgui.WindowXML):
             self.updatevalues()
 
         elif controlID == 202:
-            self.setmax()
+            if self.devList.setpoint_mode == 'max':
+                self.setprogram()
+            else:
+                self.setmax()
             self.updatevalues()
 
         elif controlID == 203:
-            self.setoff()
+            if self.devList.setpoint_mode == 'off':
+                self.setprogram()
+            else:
+                self.setoff()
             self.updatevalues()
 
         elif controlID == 204:
-            self.setaway()
+            if self.devList.setpoint_mode == 'away':
+                self.setprogram()
+            else:
+                self.setaway()
             self.updatevalues()
 
         elif controlID == 205:
-            self.sethg()
+            if self.devList.setpoint_mode == 'hg':
+                self.setprogram()
+            else:
+                self.sethg()
             self.updatevalues()
         pass
 
@@ -87,9 +99,10 @@ class ThermoWindow(xbmcgui.WindowXML):
 
     def updatevalues(self):
         self.devList = lnetatmo.DeviceList(authorization)
-
+        wifi = self.devList.wifi
         battery = self.devList.battery
-        self.getControl(200).setPercent(battery)
+        self.getControl(400).setPercent(battery)
+        self.getControl(401).setPercent(wifi)
         self.getControl(300).setLabel(str(self.devList.devicename))
         self.getControl(301).setLabel(str(self.devList.modulename))
         self.getControl(302).setLabel(str(self.devList.setpoint_temp))
@@ -100,8 +113,8 @@ class ThermoWindow(xbmcgui.WindowXML):
         else:
             self.getControl(304).setVisible(True)
 
-
         setmode = str(self.devList.setpoint_mode)
+        xbmcgui.Window(10000).setProperty('netatmo_HomeSetMode', setmode)
         if setmode == 'manual':
             setpoint_end = str(self.devList.setpoint_endpoint)
             setpoint_end = lnetatmo.toTimeString(setpoint_end)
@@ -119,4 +132,10 @@ class thermopage:
         ui.doModal()
         del ui
 
-thermopage()
+# todo better way to check if connected system.internetstate not working in openelec
+
+if status == 'Connected':
+    authorization = lnetatmo.ClientAuth()
+    thermopage()
+else:
+    print 'fuck off'

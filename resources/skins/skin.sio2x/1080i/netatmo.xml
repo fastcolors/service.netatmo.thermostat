@@ -62,7 +62,7 @@
                 <textoffsetx>130</textoffsetx>
             </control>
             <control type="radiobutton" id="203">
-                <selected>SubString(Window(home).Property(netatmo_HomeSetMode),off)</selected>
+                <selected>SubString(Window(home).Property(netatmo_HomeSetMode),OFF)</selected>
                 <label>Off</label>
                 <width>500</width>
                 <textcolor>black</textcolor>
@@ -130,7 +130,7 @@
             <font>thermo</font>
             <top>70</top>
             <centerleft>1270</centerleft>
-            <label></label>
+            <label>-</label>
             <textcolor>black</textcolor>
             <shadowcolor>-</shadowcolor>
             <align>center</align>
@@ -143,15 +143,58 @@
             <shadowcolor>-</shadowcolor>
             <align>center</align>
         </control>
-        <!--<control type="textbox">-->
-        <!--<top>0</top>-->
-        <!--<left>700</left>-->
-        <!--<width>1100</width>-->
-        <!--<font>size13</font>-->
-        <!--<height>1080</height>-->
-        <!--<label>[CR]$INFO[Window(home).Property(dev)][CR]----[CR]$INFO[Window(home).Property(ter)]</label>-->
-        <!--&lt;!&ndash;<label>until $INFO[Window(home).Property(ManualEnd)][CR]$INFO[Window(home).Property(HomeSetMode)]</label>&ndash;&gt;-->
-        <!--</control>-->
+        <control type="textbox">
+            <top>160</top>
+            <centerleft>1270</centerleft>
+            <width>1100</width>
+            <font>size13</font>
+            <height>880</height>
+            <textcolor>black</textcolor>
+            <align>justify</align>
+            <label>[CR]$INFO[Window(home).Property(dev)][CR]$INFO[Window(home).Property(ter)]</label>
+            <!--<label>until $INFO[Window(home).Property(ManualEnd)][CR]$INFO[Window(home).Property(HomeSetMode)]</label>-->
+        </control>
+        <control type="grouplist">
+            <top>210</top>
+            <centerleft>1270</centerleft>
+            <width>1000</width>
+            <height>880</height>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+            <control type="image">
+                <height>100</height>
+                <width>1000</width>
+                <texture>images/white.png</texture>
+            </control>
+        </control>
         <control type="image" description="BoilerOn" id="304">
             <left>480</left>
             <top>470</top>
@@ -160,9 +203,9 @@
             <texture colordiffuse="red">boiler.png</texture>
             <aspectratio>keep</aspectratio>
         </control>
-        <control type="progress" id="200">
-            <left>141</left>
-            <top>471</top>
+        <control type="progress" id="400" description="battery">
+            <left>161</left>
+            <top>481</top>
             <width>41</width>
             <height>21</height>
             <visible>true</visible>
@@ -173,11 +216,23 @@
             <!--<info>Window(Home).Property(netatmo_Battery)</info>-->
         </control>
         <control type="image" description="Battery">
-            <left>140</left>
-            <top>470</top>
+            <left>160</left>
+            <top>480</top>
             <width>50</width>
             <height>24</height>
             <texture>battery.png</texture>
+        </control>
+        <control type="progress" id="401" description="wifi">
+            <left>161</left>
+            <top>511</top>
+            <width>41</width>
+            <height>21</height>
+            <visible>true</visible>
+            <reveal>false</reveal>
+            <texturebg>images/transparent.png</texturebg>
+            <midtexture border="1" colordiffuse="kodi">images/white.png</midtexture>
+            <info>-</info>
+            <!--<info>Window(Home).Property(netatmo_Battery)</info>-->
         </control>
     </controls>
 </window>

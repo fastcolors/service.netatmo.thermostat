@@ -13,14 +13,14 @@ import simplejson as json
 import time
 from urllib import urlencode
 import urllib2
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 _ADDON_ = xbmcaddon.Addon()
 
 # NETATMO KODI THERMOSTAT API INFOS
 
-_CLIENT_ID = "5488e4901e775983b163f5e1"  # Your client ID from Netatmo app registration at http://dev.netatmo.com/dev/listapps
-_CLIENT_SECRET = "oFMOHe3ajCdtB7k5H7QQ7lk8iiuIfI6zf"  # Your client app secret   '     '
+_CLIENT_ID = "5488e4901e775983b163f5e1"  # Your client ID
+_CLIENT_SECRET = "oFMOHe3ajCdtB7k5H7QQ7lk8iiuIfI6zf"  # Your client app secret
 _USERNAME = _ADDON_.getSetting("username")
 _PASSWORD = _ADDON_.getSetting("password")
 _REFRESH = _ADDON_.getSetting("refresh")
@@ -117,10 +117,45 @@ class DeviceList:
 
         self.default_device_id = list(self.devices.values())[0]['_id']
         self.default_module_id = list(self.modules.values())[0]['_id']
+
+        self.rawzones = list(self.devices.values())[0]['therm_program'][self.default_module_id]['zones']
+        self.rawtimetable = list(self.devices.values())[0]['therm_program'][self.default_module_id]['timetable']
+
+        # parse timetable into nicer list
+
+        self.timetables = {}
+        self.count = 0
+        for t in self.rawtimetable:
+            self.timetables[self.count] = t
+            xbmc.log('-------')
+            xbmc.log(str(self.timetables[self.count]['m_offset']))
+            xbmc.log(str(self.timetables[self.count]['id']))
+            xbmc.log('-------')
+            self.count += 1
+
+
+        # parse zones into nicer list
+
+        self.zones = {}
+        self.count = 0
+        for z in self.rawzones:
+            self.zones[self.count] = z
+            self.count += 1
+
         self.thermrelaycmd = list(self.modules.values())[0]['therm_relay_cmd']
         self.devicename = list(self.devices.values())[0]['station_name']
         self.modulename = list(self.modules.values())[0]['module_name']
         self.battery_vp = list(self.modules.values())[0]['battery_vp']
+        self.wifi_status = list(self.devices.values())[0]['wifi_status']
+
+        if self.wifi_status > 89:
+            self.wifi = 10
+        elif self.wifi_status > 71:
+            self.wifi = 30
+        elif self.wifi_status > 56:
+            self.wifi = 50
+        else:
+            self.wifi = 100
 
         if self.battery_vp > 4500:
             self.battery = 100
@@ -131,8 +166,8 @@ class DeviceList:
             except:
                 self.battery = 0
 
-        self.respdev = resp
-
+        self.respdev = self.rawzones
+        self.respthermo = self.rawtimetable
         self.getthermoinfo(self.default_device_id, self.default_module_id)
 
     def getthermoinfo(self, device_id, module_id):
@@ -141,14 +176,15 @@ class DeviceList:
         postParams['module_id'] = module_id
         resp = postRequest(_GETTHERMO_REQ, postParams)
 
-        self.respthermo = resp
-
         self.temperature = resp['body']['measured']['temperature']
         self.setpoint_mode = resp['body']['setpoint']['setpoint_mode']
         if self.setpoint_mode == 'max':
             self.setpoint_temp = 'MAX'
+        elif self.setpoint_mode == 'off':
+            self.setpoint_temp = 'OFF'
         else:
             self.setpoint_temp = float(resp['body']['measured']['setpoint_temp'])
+
         if self.setpoint_mode == 'manual':
             self.setpoint_endpoint = resp['body']['setpoint']['setpoint_endtime']
 
@@ -161,10 +197,10 @@ class DeviceList:
             postParams['setpoint_temp'] = setpoint_temp
         self.endtime = time.time() + float(setpoint_duration)
 
-        print '--------------------------'
-        print self.endtime
-        print time.time()
-        print '---------------MM-----------'
+        xbmc.log('--------------------------')
+        xbmc.log(self.endtime)
+        xbmc.log(time.time())
+        xbmc.log('---------------MM-----------')
 
         postParams['setpoint_endtime'] = self.endtime
 
@@ -181,8 +217,8 @@ class DeviceList:
         self.getthermoinfo(self.default_device_id, self.default_module_id)
 
 
-
 # Utilities routines
+
 
 def postRequest(url, params):
     params = urlencode(params)
@@ -198,7 +234,7 @@ def postRequest(url, params):
         return json.loads(resp)
     except:
         return {}
-    # return json.loads(resp)
+        # return json.loads(resp)
 
 
 def toTimeString(value):
